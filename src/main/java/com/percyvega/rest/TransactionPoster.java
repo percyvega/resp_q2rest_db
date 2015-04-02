@@ -1,6 +1,8 @@
 package com.percyvega.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.percyvega.model.IntergateTransaction;
+import com.percyvega.util.JacksonUtil;
 import com.percyvega.util.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,23 +19,25 @@ public class TransactionPoster {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionPoster.class);
 
-    public static final int SLEEP_WHEN_UNAVAILABLE_DESTINATION_URL = 15000;
+    public static final int SLEEP_WHEN_UNAVAILABLE_DESTINATION_URL = 10000;
 
-    private RestTemplate restTemplate = new RestTemplate();
-
-    private static String destinationUrl;
+    private static RestTemplate restTemplate = new RestTemplate();
 
     @Value("${destinationUrl}")
-    public void setDestinationUrl(String destinationUrl) {
-        this.destinationUrl = destinationUrl;
-    }
+    private String destinationUrl;
 
     public void processTransaction(IntergateTransaction intergateTransaction) {
         int destinationUrlUnavailableCount = 0;
         do {
             try {
                 restTemplate.put(destinationUrl + "{id}", intergateTransaction, intergateTransaction.getObjid());
-                break;
+                try {
+                    logger.debug("JSON message was PUT: " + JacksonUtil.fromTransactionToJson(intergateTransaction));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                } finally {
+                    break;
+                }
             } catch (ResourceAccessException e) {
                 logger.debug("Destination URL unavailable #" + ++destinationUrlUnavailableCount + ". About to sleep(" + SLEEP_WHEN_UNAVAILABLE_DESTINATION_URL + ").");
                 Sleeper.sleep(SLEEP_WHEN_UNAVAILABLE_DESTINATION_URL);
