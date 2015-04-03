@@ -1,7 +1,7 @@
 package com.percyvega.jms;
 
-import com.percyvega.model.IntergateTransaction;
-import com.percyvega.rest.TransactionPoster;
+import com.percyvega.model.CarrierInquiry;
+import com.percyvega.rest.InquiryProcessor;
 import com.percyvega.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class JMSReceiver implements MessageListener {
     }
 
     @Autowired
-    private TransactionPoster transactionPoster;
+    private InquiryProcessor inquiryProcessor;
 
     @Override
     public void onMessage(Message msg) {
@@ -80,8 +80,8 @@ public class JMSReceiver implements MessageListener {
             logger.debug("Received JMS message #" + ++messageCounter + ": " + messageText);
 
             try {
-                IntergateTransaction intergateTransaction = JacksonUtil.fromJsonToTransaction(messageText);
-                transactionPoster.processTransaction(intergateTransaction);
+                CarrierInquiry carrierInquiry = JacksonUtil.fromJson(messageText, CarrierInquiry.class);
+                inquiryProcessor.process(carrierInquiry);
             } catch (IOException e) {
                 e.printStackTrace();
             }
