@@ -16,4 +16,4 @@ nohup /opt/bea/bea1033/jdk1.6.0_20/bin/java \
     $jms_qcfName \
     $jms_providerUrl \
     $jms_icfName \
-    $jms_sourceQueueName
+    $jms_sourceQueueName &
