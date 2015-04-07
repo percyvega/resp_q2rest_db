@@ -1,0 +1,5 @@
+--destinationUrl=http://localhost:8181/carrierInquiries/
+--jms.qcfName=jms/myConnectionFactory
+--jms.providerUrl=t3://localhost:8001
+--jms.icfName=weblogic.jndi.WLInitialContextFactory
+--jms.sourceQueueName=jms/percyvegaRespQueue

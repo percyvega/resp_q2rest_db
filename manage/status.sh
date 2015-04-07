@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./setName.sh
+. setVars.sh
 if [ -z "$APP_NAME" ]
 then
     echo "$APP_NAME cannot be empty."
